@@ -6,6 +6,7 @@ import PlayerControls from "./PlayerControls";
 import VolumeSlider from "./VolumeSlider";
 import TrackList from "./TrackList";
 import ThemeToggle from "./ThemeToggle";
+import SearchBar from "./SearchBar";
 
 // Sample data
 const tracks = [
@@ -55,8 +56,17 @@ export default function MusicPlayer() {
   const [shuffleActive, setShuffleActive] = useState(false);
   const [repeatActive, setRepeatActive] = useState(false);
   const [showTooltip, setShowTooltip] = useState("");
+  const [searchQuery, setSearchQuery] = useState("");
   
   const currentTrack = tracks.find((track) => track.id === currentTrackId) || tracks[0];
+  
+  // Filter tracks based on search query
+  const filteredTracks = searchQuery 
+    ? tracks.filter(track => 
+        track.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
+        track.artist.toLowerCase().includes(searchQuery.toLowerCase())
+      )
+    : tracks;
 
   // Handle keyboard shortcuts
   useEffect(() => {
@@ -90,7 +100,7 @@ export default function MusicPlayer() {
             handleNext();
             return 0;
           }
-          return prev + 0.005; // Reduced for smoother progress
+          return prev + 0.003; // Reduced for smoother progress
         });
       }, 1000);
     }
@@ -132,17 +142,24 @@ export default function MusicPlayer() {
     return `${minutes}:${seconds.toString().padStart(2, "0")}`;
   };
 
+  const handleSearch = (query: string) => {
+    setSearchQuery(query);
+  };
+
   return (
     <div className="player-gradient min-h-screen flex flex-col items-center justify-center p-6 overflow-hidden transition-colors">
       <div className="glass w-full max-w-4xl rounded-2xl p-6 md:p-8 shadow-xl relative overflow-hidden">
         <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-br from-player-primary/10 to-transparent opacity-80 dark:opacity-40 pointer-events-none" />
         
         <div className="relative z-10">
-          {/* Header with theme toggle */}
-          <div className="flex justify-between items-center mb-6">
+          {/* Header with search and theme toggle */}
+          <div className="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
             <h1 className="text-2xl font-bold bg-gradient-to-r from-player-primary to-player-secondary bg-clip-text text-transparent">
               Rhythm Refine
             </h1>
+            
+            <SearchBar onSearch={handleSearch} />
+            
             <div className="flex items-center gap-2">
               <div 
                 className="text-sm text-gray-600 dark:text-gray-400 hidden md:block"
@@ -152,10 +169,11 @@ export default function MusicPlayer() {
                 <button className="p-2 rounded hover:bg-white/20 dark:hover:bg-white/10 relative">
                   <Info size={16} />
                   {showTooltip === "keyboard" && (
-                    <div className="absolute right-0 mt-2 p-3 bg-black/70 dark:bg-white/90 dark:text-black text-white text-xs rounded shadow-lg z-50 whitespace-nowrap">
+                    <div className="absolute right-0 mt-2 p-3 bg-black/70 dark:bg-white/90 dark:text-black text-white text-xs rounded shadow-lg z-50 whitespace-nowrap animate-fade-in">
                       <p className="mb-1"><b>Space</b>: Play/Pause</p>
                       <p className="mb-1"><b>←/→</b>: Previous/Next</p>
-                      <p><b>M</b>: Mute</p>
+                      <p className="mb-1"><b>M</b>: Mute</p>
+                      <p><b>Ctrl+K</b>: Search</p>
                     </div>
                   )}
                 </button>
@@ -216,7 +234,7 @@ export default function MusicPlayer() {
                     >
                       <Heart size={18} fill={isFavorite ? "currentColor" : "none"} />
                       {showTooltip === "favorite" && (
-                        <div className="absolute mt-2 p-2 bg-black/70 dark:bg-white/90 dark:text-black text-white text-xs rounded">
+                        <div className="absolute mt-2 p-2 bg-black/70 dark:bg-white/90 dark:text-black text-white text-xs rounded animate-fade-in">
                           {isFavorite ? "Remove favorite" : "Add favorite"}
                         </div>
                       )}
@@ -232,7 +250,7 @@ export default function MusicPlayer() {
                     <span>{currentTrack.duration}</span>
                   </div>
                   
-                  <div className="relative h-1 bg-gray-300 dark:bg-gray-700 rounded-full overflow-hidden cursor-pointer"
+                  <div className="relative h-1 bg-gray-300 dark:bg-gray-700 rounded-full overflow-hidden cursor-pointer group"
                        onClick={(e) => {
                          const rect = e.currentTarget.getBoundingClientRect();
                          const x = e.clientX - rect.left;
@@ -242,6 +260,9 @@ export default function MusicPlayer() {
                     <div
                       className="absolute h-full bg-primary transition-all duration-300 ease-linear"
                       style={{ width: `${progress * 100}%` }}
+                    />
+                    <div className="absolute h-3 w-3 bg-white rounded-full top-1/2 -translate-y-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity shadow-md"
+                         style={{ left: `${progress * 100}%` }}
                     />
                   </div>
                 </div>
@@ -270,7 +291,7 @@ export default function MusicPlayer() {
             {/* Track List - Hidden on small screens, shown on larger screens */}
             <div className="hidden md:block w-full md:w-[280px]">
               <TrackList
-                tracks={tracks}
+                tracks={filteredTracks}
                 currentTrackId={currentTrackId}
                 onSelectTrack={selectTrack}
               />
@@ -280,7 +301,7 @@ export default function MusicPlayer() {
           {/* Track List for mobile */}
           <div className="block md:hidden mt-6">
             <TrackList
-              tracks={tracks}
+              tracks={filteredTracks}
               currentTrackId={currentTrackId}
               onSelectTrack={selectTrack}
             />

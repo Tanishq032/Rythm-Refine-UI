@@ -17,15 +17,17 @@ export default function ProgressRing({ progress, size, strokeWidth, isPlaying }:
     <svg 
       height={size} 
       width={size} 
-      className={`absolute top-0 left-0 -rotate-90 transition-all duration-700 ease-in-out ${
+      className={`absolute top-0 left-0 -rotate-90 transition-all duration-1000 ease-in-out ${
         isPlaying ? 'opacity-100 animate-pulse-slow' : 'opacity-70'
       }`}
     >
-      {/* Glow effect */}
+      {/* Enhanced glow effect */}
       {isPlaying && (
         <filter id="glow">
-          <feGaussianBlur stdDeviation="2.5" result="blur" />
-          <feComposite in="SourceGraphic" in2="blur" operator="over" />
+          <feGaussianBlur stdDeviation="3.5" result="coloredBlur" />
+          <feFlood floodColor="#9b87f5" floodOpacity="0.5" result="glowColor" />
+          <feComposite in="glowColor" in2="coloredBlur" operator="in" result="softGlow" />
+          <feComposite in="SourceGraphic" in2="softGlow" operator="over" />
         </filter>
       )}
       
@@ -41,7 +43,7 @@ export default function ProgressRing({ progress, size, strokeWidth, isPlaying }:
         className="text-primary"
       />
       
-      {/* Progress circle */}
+      {/* Progress circle with enhanced animation */}
       <circle
         stroke="currentColor"
         fill="transparent"
@@ -52,7 +54,7 @@ export default function ProgressRing({ progress, size, strokeWidth, isPlaying }:
         r={normalizedRadius}
         cx={size / 2}
         cy={size / 2}
-        className={`text-primary transition-all duration-700 ease-in-out ${isPlaying ? 'filter' : ''}`}
+        className={`text-primary transition-all duration-1000 ease-in-out ${isPlaying ? 'filter' : ''}`}
         filter={isPlaying ? "url(#glow)" : ""}
       />
     </svg>
