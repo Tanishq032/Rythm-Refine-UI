@@ -1,6 +1,6 @@
 
 import { useState, useEffect } from "react";
-import { Heart } from "lucide-react";
+import { Heart, Info } from "lucide-react";
 import ProgressRing from "./ProgressRing";
 import PlayerControls from "./PlayerControls";
 import VolumeSlider from "./VolumeSlider";
@@ -54,8 +54,30 @@ export default function MusicPlayer() {
   const [isFavorite, setIsFavorite] = useState(false);
   const [shuffleActive, setShuffleActive] = useState(false);
   const [repeatActive, setRepeatActive] = useState(false);
+  const [showTooltip, setShowTooltip] = useState("");
   
   const currentTrack = tracks.find((track) => track.id === currentTrackId) || tracks[0];
+
+  // Handle keyboard shortcuts
+  useEffect(() => {
+    const handleKeyPress = (e: KeyboardEvent) => {
+      if (e.code === "Space") {
+        e.preventDefault();
+        togglePlay();
+      } else if (e.code === "ArrowRight") {
+        handleNext();
+      } else if (e.code === "ArrowLeft") {
+        handlePrevious();
+      } else if (e.code === "KeyM") {
+        setVolume(prev => prev > 0 ? 0 : 0.7);
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyPress);
+    return () => {
+      window.removeEventListener("keydown", handleKeyPress);
+    };
+  }, []);
 
   // Simulate progress when playing
   useEffect(() => {
@@ -68,7 +90,7 @@ export default function MusicPlayer() {
             handleNext();
             return 0;
           }
-          return prev + 0.01;
+          return prev + 0.005; // Reduced for smoother progress
         });
       }, 1000);
     }
@@ -121,7 +143,25 @@ export default function MusicPlayer() {
             <h1 className="text-2xl font-bold bg-gradient-to-r from-player-primary to-player-secondary bg-clip-text text-transparent">
               Rhythm Refine
             </h1>
-            <ThemeToggle />
+            <div className="flex items-center gap-2">
+              <div 
+                className="text-sm text-gray-600 dark:text-gray-400 hidden md:block"
+                onMouseEnter={() => setShowTooltip("keyboard")}
+                onMouseLeave={() => setShowTooltip("")}
+              >
+                <button className="p-2 rounded hover:bg-white/20 dark:hover:bg-white/10 relative">
+                  <Info size={16} />
+                  {showTooltip === "keyboard" && (
+                    <div className="absolute right-0 mt-2 p-3 bg-black/70 dark:bg-white/90 dark:text-black text-white text-xs rounded shadow-lg z-50 whitespace-nowrap">
+                      <p className="mb-1"><b>Space</b>: Play/Pause</p>
+                      <p className="mb-1"><b>←/→</b>: Previous/Next</p>
+                      <p><b>M</b>: Mute</p>
+                    </div>
+                  )}
+                </button>
+              </div>
+              <ThemeToggle />
+            </div>
           </div>
           
           <div className="flex flex-col md:flex-row gap-8">
@@ -137,11 +177,13 @@ export default function MusicPlayer() {
                 />
                 
                 {/* Album art */}
-                <div className="w-[280px] h-[280px] rounded-full overflow-hidden border-4 border-white/30 dark:border-black/30 shadow-xl relative">
+                <div className="w-[280px] h-[280px] rounded-full overflow-hidden border-4 border-white/30 dark:border-black/30 shadow-xl relative group">
                   <img
                     src={currentTrack.cover}
                     alt={`${currentTrack.title} album cover`}
-                    className={`w-full h-full object-cover transition-transform duration-700 ${isPlaying ? "animate-spin-slow" : ""}`}
+                    className={`w-full h-full object-cover transition-transform duration-1000 ease-in-out ${
+                      isPlaying ? "animate-spin-slow" : ""
+                    } group-hover:scale-105 transition-all duration-700`}
                   />
                   
                   {/* Play/Pause overlay */}
@@ -149,7 +191,7 @@ export default function MusicPlayer() {
                     className="absolute inset-0 flex items-center justify-center bg-black/30 backdrop-blur-sm opacity-0 hover:opacity-100 transition-opacity cursor-pointer"
                     onClick={togglePlay}
                   >
-                    <div className="bg-white/90 text-black rounded-full p-5">
+                    <div className="bg-white/90 text-black rounded-full p-5 transform transition-transform hover:scale-110 active:scale-95">
                       {isPlaying ? (
                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>
                       ) : (
@@ -169,8 +211,15 @@ export default function MusicPlayer() {
                         isFavorite ? "text-red-500" : "text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
                       }`}
                       aria-label={isFavorite ? "Remove from favorites" : "Add to favorites"}
+                      onMouseEnter={() => setShowTooltip("favorite")}
+                      onMouseLeave={() => setShowTooltip("")}
                     >
                       <Heart size={18} fill={isFavorite ? "currentColor" : "none"} />
+                      {showTooltip === "favorite" && (
+                        <div className="absolute mt-2 p-2 bg-black/70 dark:bg-white/90 dark:text-black text-white text-xs rounded">
+                          {isFavorite ? "Remove favorite" : "Add favorite"}
+                        </div>
+                      )}
                     </button>
                   </div>
                   <p className="text-gray-600 dark:text-gray-400">{currentTrack.artist}</p>
@@ -183,7 +232,13 @@ export default function MusicPlayer() {
                     <span>{currentTrack.duration}</span>
                   </div>
                   
-                  <div className="relative h-1 bg-gray-300 dark:bg-gray-700 rounded-full overflow-hidden">
+                  <div className="relative h-1 bg-gray-300 dark:bg-gray-700 rounded-full overflow-hidden cursor-pointer"
+                       onClick={(e) => {
+                         const rect = e.currentTarget.getBoundingClientRect();
+                         const x = e.clientX - rect.left;
+                         const clickedProgress = x / rect.width;
+                         setProgress(Math.max(0, Math.min(1, clickedProgress)));
+                       }}>
                     <div
                       className="absolute h-full bg-primary transition-all duration-300 ease-linear"
                       style={{ width: `${progress * 100}%` }}
@@ -201,6 +256,8 @@ export default function MusicPlayer() {
                   toggleShuffle={() => setShuffleActive(!shuffleActive)}
                   repeatActive={repeatActive}
                   toggleRepeat={() => setRepeatActive(!repeatActive)}
+                  showTooltip={showTooltip}
+                  setShowTooltip={setShowTooltip}
                 />
                 
                 {/* Volume */}

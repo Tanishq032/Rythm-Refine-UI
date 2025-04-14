@@ -85,8 +85,8 @@ export default {
 					to: { height: '0' }
 				},
 				'pulse-slow': {
-					'0%, 100%': { opacity: '1' },
-					'50%': { opacity: '0.8' }
+					'0%, 100%': { opacity: '1', filter: 'brightness(1)' },
+					'50%': { opacity: '0.9', filter: 'brightness(1.1)' }
 				},
 				'spin-slow': {
 					'0%': { transform: 'rotate(0deg)' },
@@ -108,8 +108,8 @@ export default {
 			animation: {
 				'accordion-down': 'accordion-down 0.2s ease-out',
 				'accordion-up': 'accordion-up 0.2s ease-out',
-				'pulse-slow': 'pulse-slow 3s infinite ease-in-out',
-				'spin-slow': 'spin-slow 12s linear infinite',
+				'pulse-slow': 'pulse-slow 4s infinite ease-in-out',
+				'spin-slow': 'spin-slow 20s linear infinite',
 				'fade-in': 'fade-in 0.3s ease-out',
 				'slide-up': 'slide-up 0.4s ease-out',
 				'scale-in': 'scale-in 0.2s ease-out'
