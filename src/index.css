@@ -35,6 +35,11 @@
 
     --radius: 0.5rem;
     
+    /* Player-specific colors */
+    --player-primary: 262 80% 60%;
+    --player-secondary: 262 30% 70%;
+    --player-dark: 240 24% 15%;
+    
     /* Default accent color - can be overridden dynamically */
     --accent-color: #9b87f5;
   }
@@ -67,6 +72,11 @@
     --border: 240 19% 26%;
     --input: 240 19% 26%;
     --ring: 262 80% 65%;
+    
+    /* Player-specific colors for dark mode */
+    --player-primary: 262 80% 65%;
+    --player-secondary: 262 40% 45%;
+    --player-dark: 240 30% 10%;
   }
   
   /* Theme transition */

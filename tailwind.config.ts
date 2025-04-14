@@ -1,4 +1,3 @@
-
 import type { Config } from "tailwindcss";
 
 export default {
@@ -64,9 +63,9 @@ export default {
 					ring: 'hsl(var(--sidebar-ring))'
 				},
 				player: {
-					primary: 'var(--accent-color, #9b87f5)',
-					secondary: '#7E69AB',
-					dark: '#1A1F2C',
+					primary: 'hsl(var(--player-primary))',
+					secondary: 'hsl(var(--player-secondary))',
+					dark: 'hsl(var(--player-dark))',
 					light: '#F1F0FB',
 				}
 			},
