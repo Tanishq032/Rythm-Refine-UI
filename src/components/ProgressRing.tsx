@@ -6,9 +6,16 @@ interface ProgressRingProps {
   size: number;
   strokeWidth: number;
   isPlaying: boolean;
+  accentColor?: string;
 }
 
-export default function ProgressRing({ progress, size, strokeWidth, isPlaying }: ProgressRingProps) {
+export default function ProgressRing({ 
+  progress, 
+  size, 
+  strokeWidth, 
+  isPlaying,
+  accentColor
+}: ProgressRingProps) {
   const normalizedRadius = size / 2 - strokeWidth * 2;
   const circumference = normalizedRadius * 2 * Math.PI;
   const strokeDashoffset = circumference - progress * circumference;
@@ -25,7 +32,7 @@ export default function ProgressRing({ progress, size, strokeWidth, isPlaying }:
       {isPlaying && (
         <filter id="glow">
           <feGaussianBlur stdDeviation="3.5" result="coloredBlur" />
-          <feFlood floodColor="#9b87f5" floodOpacity="0.5" result="glowColor" />
+          <feFlood floodColor={accentColor || "#9b87f5"} floodOpacity="0.5" result="glowColor" />
           <feComposite in="glowColor" in2="coloredBlur" operator="in" result="softGlow" />
           <feComposite in="SourceGraphic" in2="softGlow" operator="over" />
         </filter>
@@ -33,19 +40,19 @@ export default function ProgressRing({ progress, size, strokeWidth, isPlaying }:
       
       {/* Background circle */}
       <circle
-        stroke="currentColor"
+        stroke={accentColor || "currentColor"}
         fill="transparent"
         strokeWidth={strokeWidth}
         strokeOpacity="0.2"
         r={normalizedRadius}
         cx={size / 2}
         cy={size / 2}
-        className="text-primary"
+        className={!accentColor ? "text-primary" : ""}
       />
       
       {/* Progress circle with enhanced animation */}
       <circle
-        stroke="currentColor"
+        stroke={accentColor || "currentColor"}
         fill="transparent"
         strokeWidth={strokeWidth}
         strokeDasharray={circumference + ' ' + circumference}
@@ -54,7 +61,7 @@ export default function ProgressRing({ progress, size, strokeWidth, isPlaying }:
         r={normalizedRadius}
         cx={size / 2}
         cy={size / 2}
-        className={`text-primary transition-all duration-1000 ease-in-out ${isPlaying ? 'filter' : ''}`}
+        className={!accentColor ? "text-primary transition-all duration-1000 ease-in-out" : "transition-all duration-1000 ease-in-out"}
         filter={isPlaying ? "url(#glow)" : ""}
       />
     </svg>

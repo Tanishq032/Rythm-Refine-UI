@@ -7,6 +7,10 @@ import VolumeSlider from "./VolumeSlider";
 import TrackList from "./TrackList";
 import ThemeToggle from "./ThemeToggle";
 import SearchBar from "./SearchBar";
+import ColorPicker from "./ColorPicker";
+import DynamicBackground from "./DynamicBackground";
+import FavoriteAnimation from "./FavoriteAnimation";
+import { useToast } from "@/hooks/use-toast";
 
 // Sample data
 const tracks = [
@@ -53,10 +57,15 @@ export default function MusicPlayer() {
   const [progress, setProgress] = useState(0);
   const [volume, setVolume] = useState(0.7);
   const [isFavorite, setIsFavorite] = useState(false);
+  const [showFavoriteAnimation, setShowFavoriteAnimation] = useState(false);
   const [shuffleActive, setShuffleActive] = useState(false);
   const [repeatActive, setRepeatActive] = useState(false);
   const [showTooltip, setShowTooltip] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
+  const [accentColor, setAccentColor] = useState("#9b87f5"); // Default accent color
+  const [isDarkTheme, setIsDarkTheme] = useState(false);
+  
+  const { toast } = useToast();
   
   const currentTrack = tracks.find((track) => track.id === currentTrackId) || tracks[0];
   
@@ -88,6 +97,41 @@ export default function MusicPlayer() {
       window.removeEventListener("keydown", handleKeyPress);
     };
   }, []);
+
+  // Apply accent color to CSS variables
+  useEffect(() => {
+    document.documentElement.style.setProperty('--accent-color', accentColor);
+    // Update equivalent hsl variable used by primary
+    document.documentElement.style.setProperty('--primary', accentColorToHsl(accentColor));
+  }, [accentColor]);
+
+  // Convert hex to HSL for the CSS variable
+  const accentColorToHsl = (hex: string): string => {
+    // Simple conversion - for a proper one you'd need a full RGB to HSL conversion
+    // This is a basic approximation for the demo
+    const purple = "#9b87f5"; // Default - 262 80% 60%
+    const green = "#10b981";  // ~ 160 74% 40%
+    const blue = "#3b82f6";   // ~ 214 93% 60% 
+    const pink = "#ec4899";   // ~ 325 78% 60%
+    const orange = "#f97316"; // ~ 24 96% 53%
+    const yellow = "#eab308"; // ~ 48 96% 47%
+    const red = "#ef4444";    // ~ 0 84% 60%
+    const violet = "#a855f7"; // ~ 270 96% 65%
+    
+    const colorMapping = {
+      [purple]: "262 80% 60%",
+      [green]: "160 74% 40%",
+      [blue]: "214 93% 60%",
+      [pink]: "325 78% 60%",
+      [orange]: "24 96% 53%",
+      [yellow]: "48 96% 47%",
+      [red]: "0 84% 60%",
+      [violet]: "270 96% 65%"
+    };
+    
+    // Return the matching HSL or default to purple
+    return colorMapping[hex as keyof typeof colorMapping] || "262 80% 60%";
+  };
 
   // Simulate progress when playing
   useEffect(() => {
@@ -145,10 +189,43 @@ export default function MusicPlayer() {
   const handleSearch = (query: string) => {
     setSearchQuery(query);
   };
+  
+  const handleToggleFavorite = () => {
+    const newFavoriteState = !isFavorite;
+    setIsFavorite(newFavoriteState);
+    
+    if (newFavoriteState) {
+      setShowFavoriteAnimation(true);
+      toast({
+        title: "Added to favorites",
+        description: `${currentTrack.title} by ${currentTrack.artist} has been added to your favorites.`,
+      });
+    } else {
+      toast({
+        title: "Removed from favorites",
+        description: `${currentTrack.title} by ${currentTrack.artist} has been removed from your favorites.`,
+      });
+    }
+  };
+  
+  const handleColorChange = (color: string) => {
+    setAccentColor(color);
+    toast({
+      title: "Color theme updated",
+      description: "Your new accent color has been applied.",
+    });
+  };
+  
+  const handleThemeChange = (isDark: boolean) => {
+    setIsDarkTheme(isDark);
+  };
 
   return (
-    <div className="player-gradient min-h-screen flex flex-col items-center justify-center p-6 overflow-hidden transition-colors">
-      <div className="glass w-full max-w-4xl rounded-2xl p-6 md:p-8 shadow-xl relative overflow-hidden">
+    <div className="player-gradient min-h-screen flex flex-col items-center justify-center p-6 overflow-hidden transition-colors duration-700">
+      {/* Dynamic background that changes with album art */}
+      <DynamicBackground albumCover={currentTrack.cover} isActive={isPlaying} />
+      
+      <div className="glass w-full max-w-4xl rounded-2xl p-6 md:p-8 shadow-xl relative overflow-hidden transition-all duration-700">
         <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-br from-player-primary/10 to-transparent opacity-80 dark:opacity-40 pointer-events-none" />
         
         <div className="relative z-10">
@@ -178,7 +255,8 @@ export default function MusicPlayer() {
                   )}
                 </button>
               </div>
-              <ThemeToggle />
+              <ColorPicker onColorSelect={handleColorChange} selectedColor={accentColor} />
+              <ThemeToggle onThemeChange={handleThemeChange} />
             </div>
           </div>
           
@@ -186,12 +264,21 @@ export default function MusicPlayer() {
             {/* Album Art and Controls */}
             <div className="flex-grow flex flex-col items-center">
               <div className="relative inline-block">
+                {/* Favorite animation */}
+                {showFavoriteAnimation && (
+                  <FavoriteAnimation 
+                    isFavorite={isFavorite} 
+                    onAnimationComplete={() => setShowFavoriteAnimation(false)} 
+                  />
+                )}
+                
                 {/* Progress ring */}
                 <ProgressRing
                   progress={progress}
                   size={280}
                   strokeWidth={4}
                   isPlaying={isPlaying}
+                  accentColor={accentColor}
                 />
                 
                 {/* Album art */}
@@ -224,7 +311,7 @@ export default function MusicPlayer() {
                   <div className="flex justify-center items-center gap-2">
                     <h2 className="text-xl font-bold">{currentTrack.title}</h2>
                     <button
-                      onClick={() => setIsFavorite(!isFavorite)}
+                      onClick={handleToggleFavorite}
                       className={`transition-colors ${
                         isFavorite ? "text-red-500" : "text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
                       }`}
@@ -232,7 +319,11 @@ export default function MusicPlayer() {
                       onMouseEnter={() => setShowTooltip("favorite")}
                       onMouseLeave={() => setShowTooltip("")}
                     >
-                      <Heart size={18} fill={isFavorite ? "currentColor" : "none"} />
+                      <Heart 
+                        size={18} 
+                        fill={isFavorite ? "currentColor" : "none"} 
+                        className={isFavorite ? "animate-favorite-beat" : ""}
+                      />
                       {showTooltip === "favorite" && (
                         <div className="absolute mt-2 p-2 bg-black/70 dark:bg-white/90 dark:text-black text-white text-xs rounded animate-fade-in">
                           {isFavorite ? "Remove favorite" : "Add favorite"}
@@ -258,11 +349,11 @@ export default function MusicPlayer() {
                          setProgress(Math.max(0, Math.min(1, clickedProgress)));
                        }}>
                     <div
-                      className="absolute h-full bg-primary transition-all duration-300 ease-linear"
-                      style={{ width: `${progress * 100}%` }}
+                      className="absolute h-full transition-all duration-300 ease-linear"
+                      style={{ width: `${progress * 100}%`, backgroundColor: accentColor }}
                     />
-                    <div className="absolute h-3 w-3 bg-white rounded-full top-1/2 -translate-y-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity shadow-md"
-                         style={{ left: `${progress * 100}%` }}
+                    <div className="absolute h-3 w-3 rounded-full top-1/2 -translate-y-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity shadow-md"
+                         style={{ left: `${progress * 100}%`, backgroundColor: accentColor }}
                     />
                   </div>
                 </div>

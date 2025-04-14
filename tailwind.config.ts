@@ -64,7 +64,7 @@ export default {
 					ring: 'hsl(var(--sidebar-ring))'
 				},
 				player: {
-					primary: '#9b87f5',
+					primary: 'var(--accent-color, #9b87f5)',
 					secondary: '#7E69AB',
 					dark: '#1A1F2C',
 					light: '#F1F0FB',
@@ -108,7 +108,12 @@ export default {
 				'scale-in': {
 					from: { transform: 'scale(0.95)', opacity: '0' },
 					to: { transform: 'scale(1)', opacity: '1' }
-				}
+				},
+				'favorite-pulse': {
+					'0%': { transform: 'scale(1)', opacity: '1' },
+					'50%': { transform: 'scale(1.2)', opacity: '0.8' },
+					'100%': { transform: 'scale(1)', opacity: '1' }
+				},
 			},
 			animation: {
 				'accordion-down': 'accordion-down 0.2s ease-out',
@@ -118,7 +123,9 @@ export default {
 				'float': 'float 6s ease-in-out infinite',
 				'fade-in': 'fade-in 0.3s ease-out',
 				'slide-up': 'slide-up 0.4s ease-out',
-				'scale-in': 'scale-in 0.2s ease-out'
+				'scale-in': 'scale-in 0.2s ease-out',
+				'favorite-pulse': 'favorite-pulse 1.5s infinite',
+				'favorite-beat': 'favorite-beat 0.8s forwards',
 			}
 		}
 	},
