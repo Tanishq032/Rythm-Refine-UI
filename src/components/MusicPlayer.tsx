@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { Heart, Info } from "lucide-react";
 import ProgressRing from "./ProgressRing";
@@ -10,9 +9,9 @@ import SearchBar from "./SearchBar";
 import ColorPicker from "./ColorPicker";
 import DynamicBackground from "./DynamicBackground";
 import FavoriteAnimation from "./FavoriteAnimation";
+import PulsingPlayhead from "./PulsingPlayhead";
 import { useToast } from "@/hooks/use-toast";
 
-// Sample data
 const tracks = [
   {
     id: "1",
@@ -62,14 +61,13 @@ export default function MusicPlayer() {
   const [repeatActive, setRepeatActive] = useState(false);
   const [showTooltip, setShowTooltip] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
-  const [accentColor, setAccentColor] = useState("#9b87f5"); // Default accent color
+  const [accentColor, setAccentColor] = useState("#9b87f5");
   const [isDarkTheme, setIsDarkTheme] = useState(false);
   
   const { toast } = useToast();
   
   const currentTrack = tracks.find((track) => track.id === currentTrackId) || tracks[0];
   
-  // Filter tracks based on search query
   const filteredTracks = searchQuery 
     ? tracks.filter(track => 
         track.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
@@ -77,7 +75,6 @@ export default function MusicPlayer() {
       )
     : tracks;
 
-  // Handle keyboard shortcuts
   useEffect(() => {
     const handleKeyPress = (e: KeyboardEvent) => {
       if (e.code === "Space") {
@@ -98,42 +95,25 @@ export default function MusicPlayer() {
     };
   }, []);
 
-  // Apply accent color to CSS variables
   useEffect(() => {
     document.documentElement.style.setProperty('--accent-color', accentColor);
-    // Update equivalent hsl variable used by primary
     document.documentElement.style.setProperty('--primary', accentColorToHsl(accentColor));
   }, [accentColor]);
 
-  // Convert hex to HSL for the CSS variable
   const accentColorToHsl = (hex: string): string => {
-    // Simple conversion - for a proper one you'd need a full RGB to HSL conversion
-    // This is a basic approximation for the demo
-    const purple = "#9b87f5"; // Default - 262 80% 60%
-    const green = "#10b981";  // ~ 160 74% 40%
-    const blue = "#3b82f6";   // ~ 214 93% 60% 
-    const pink = "#ec4899";   // ~ 325 78% 60%
-    const orange = "#f97316"; // ~ 24 96% 53%
-    const yellow = "#eab308"; // ~ 48 96% 47%
-    const red = "#ef4444";    // ~ 0 84% 60%
-    const violet = "#a855f7"; // ~ 270 96% 65%
-    
     const colorMapping = {
-      [purple]: "262 80% 60%",
-      [green]: "160 74% 40%",
-      [blue]: "214 93% 60%",
-      [pink]: "325 78% 60%",
-      [orange]: "24 96% 53%",
-      [yellow]: "48 96% 47%",
-      [red]: "0 84% 60%",
-      [violet]: "270 96% 65%"
+      "#9b87f5": "262 80% 60%",
+      "#10b981": "160 74% 40%",
+      "#3b82f6": "214 93% 60%",
+      "#ec4899": "325 78% 60%",
+      "#f97316": "24 96% 53%",
+      "#eab308": "48 96% 47%",
+      "#ef4444": "0 84% 60%",
+      "#a855f7": "270 96% 65%"
     };
-    
-    // Return the matching HSL or default to purple
-    return colorMapping[hex as keyof typeof colorMapping] || "262 80% 60%";
+    return colorMapping[hex] || "262 80% 60%";
   };
 
-  // Simulate progress when playing
   useEffect(() => {
     let interval: number | undefined;
     
@@ -144,7 +124,7 @@ export default function MusicPlayer() {
             handleNext();
             return 0;
           }
-          return prev + 0.003; // Reduced for smoother progress
+          return prev + 0.003;
         });
       }, 1000);
     }
@@ -179,7 +159,7 @@ export default function MusicPlayer() {
   };
 
   const formatTime = (progress: number) => {
-    const duration = 210; // Assuming average track is 3:30
+    const duration = 210;
     const currentSeconds = Math.floor(progress * duration);
     const minutes = Math.floor(currentSeconds / 60);
     const seconds = currentSeconds % 60;
@@ -222,14 +202,12 @@ export default function MusicPlayer() {
 
   return (
     <div className="player-gradient min-h-screen flex flex-col items-center justify-center p-6 overflow-hidden transition-colors duration-700">
-      {/* Dynamic background that changes with album art */}
       <DynamicBackground albumCover={currentTrack.cover} isActive={isPlaying} />
       
       <div className="glass w-full max-w-4xl rounded-2xl p-6 md:p-8 shadow-xl relative overflow-hidden transition-all duration-700">
         <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-br from-player-primary/10 to-transparent opacity-80 dark:opacity-40 pointer-events-none" />
         
         <div className="relative z-10">
-          {/* Header with search and theme toggle */}
           <div className="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
             <h1 className="text-2xl font-bold bg-gradient-to-r from-player-primary to-player-secondary bg-clip-text text-transparent">
               Rhythm Refine
@@ -261,10 +239,8 @@ export default function MusicPlayer() {
           </div>
           
           <div className="flex flex-col md:flex-row gap-8">
-            {/* Album Art and Controls */}
             <div className="flex-grow flex flex-col items-center">
               <div className="relative inline-block">
-                {/* Favorite animation */}
                 {showFavoriteAnimation && (
                   <FavoriteAnimation 
                     isFavorite={isFavorite} 
@@ -272,7 +248,6 @@ export default function MusicPlayer() {
                   />
                 )}
                 
-                {/* Progress ring */}
                 <ProgressRing
                   progress={progress}
                   size={280}
@@ -281,7 +256,6 @@ export default function MusicPlayer() {
                   accentColor={accentColor}
                 />
                 
-                {/* Album art */}
                 <div className="w-[280px] h-[280px] rounded-full overflow-hidden border-4 border-white/30 dark:border-black/30 shadow-xl relative group">
                   <img
                     src={currentTrack.cover}
@@ -291,7 +265,6 @@ export default function MusicPlayer() {
                     } group-hover:scale-105 transition-all duration-700`}
                   />
                   
-                  {/* Play/Pause overlay */}
                   <div 
                     className="absolute inset-0 flex items-center justify-center bg-black/30 backdrop-blur-sm opacity-0 hover:opacity-100 transition-opacity cursor-pointer"
                     onClick={togglePlay}
@@ -306,7 +279,6 @@ export default function MusicPlayer() {
                   </div>
                 </div>
                 
-                {/* Track info */}
                 <div className="mt-6 text-center">
                   <div className="flex justify-center items-center gap-2">
                     <h2 className="text-xl font-bold">{currentTrack.title}</h2>
@@ -334,31 +306,15 @@ export default function MusicPlayer() {
                   <p className="text-gray-600 dark:text-gray-400">{currentTrack.artist}</p>
                 </div>
                 
-                {/* Progress bar and time */}
                 <div className="w-full mt-4">
-                  <div className="flex justify-between text-xs text-gray-600 dark:text-gray-400 mb-1">
-                    <span>{formatTime(progress)}</span>
-                    <span>{currentTrack.duration}</span>
-                  </div>
-                  
-                  <div className="relative h-1 bg-gray-300 dark:bg-gray-700 rounded-full overflow-hidden cursor-pointer group"
-                       onClick={(e) => {
-                         const rect = e.currentTarget.getBoundingClientRect();
-                         const x = e.clientX - rect.left;
-                         const clickedProgress = x / rect.width;
-                         setProgress(Math.max(0, Math.min(1, clickedProgress)));
-                       }}>
-                    <div
-                      className="absolute h-full transition-all duration-300 ease-linear"
-                      style={{ width: `${progress * 100}%`, backgroundColor: accentColor }}
-                    />
-                    <div className="absolute h-3 w-3 rounded-full top-1/2 -translate-y-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity shadow-md"
-                         style={{ left: `${progress * 100}%`, backgroundColor: accentColor }}
-                    />
-                  </div>
+                  <PulsingPlayhead
+                    isPlaying={isPlaying}
+                    progress={progress}
+                    accentColor={accentColor}
+                    onClick={(clickedProgress) => setProgress(clickedProgress)}
+                  />
                 </div>
                 
-                {/* Controls */}
                 <PlayerControls
                   isPlaying={isPlaying}
                   togglePlay={togglePlay}
@@ -372,14 +328,12 @@ export default function MusicPlayer() {
                   setShowTooltip={setShowTooltip}
                 />
                 
-                {/* Volume */}
                 <div className="mt-6 flex justify-center">
                   <VolumeSlider volume={volume} setVolume={setVolume} />
                 </div>
               </div>
             </div>
             
-            {/* Track List - Hidden on small screens, shown on larger screens */}
             <div className="hidden md:block w-full md:w-[280px]">
               <TrackList
                 tracks={filteredTracks}
@@ -389,7 +343,6 @@ export default function MusicPlayer() {
             </div>
           </div>
           
-          {/* Track List for mobile */}
           <div className="block md:hidden mt-6">
             <TrackList
               tracks={filteredTracks}
