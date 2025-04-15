@@ -1,3 +1,4 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -106,7 +107,7 @@
   }
   
   .player-gradient {
-    @apply bg-gradient-to-br from-player-primary/60 to-player-secondary/20 dark:from-player-primary/30 dark:to-player-dark;
+    @apply bg-gradient-to-br from-[hsl(var(--player-primary)_/_0.6)] to-[hsl(var(--player-secondary)_/_0.2)] dark:from-[hsl(var(--player-primary)_/_0.3)] dark:to-[hsl(var(--player-dark))];
   }
   
   .track-hover {

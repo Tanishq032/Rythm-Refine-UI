@@ -11,6 +11,7 @@ import DynamicBackground from "./DynamicBackground";
 import FavoriteAnimation from "./FavoriteAnimation";
 import PulsingPlayhead from "./PulsingPlayhead";
 import { useToast } from "@/hooks/use-toast";
+import UserProfile from "./UserProfile";
 
 const tracks = [
   {
@@ -18,35 +19,35 @@ const tracks = [
     title: "Blinding Lights",
     artist: "The Weeknd",
     duration: "3:22",
-    cover: "https://images.unsplash.com/photo-1614613535308-eb5fbd3d2c17?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3",
+    cover: "https://i.scdn.co/image/ab67616d0000b2738863bc11d2aa12b54f5aeb36",
   },
   {
     id: "2",
     title: "Save Your Tears",
     artist: "The Weeknd",
     duration: "3:35",
-    cover: "https://images.unsplash.com/photo-1598488035139-bdbb2231ce04?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3",
+    cover: "https://i.scdn.co/image/ab67616d0000b2738863bc11d2aa12b54f5aeb36",
   },
   {
     id: "3",
     title: "Starboy",
     artist: "The Weeknd ft. Daft Punk",
     duration: "3:50",
-    cover: "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3",
+    cover: "https://i.scdn.co/image/ab67616d0000b273118f03533e47529f9d9a2c69",
   },
   {
     id: "4",
     title: "In Your Eyes",
     artist: "The Weeknd",
     duration: "3:58",
-    cover: "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3",
+    cover: "https://i.scdn.co/image/ab67616d0000b2738863bc11d2aa12b54f5aeb36",
   },
   {
     id: "5",
     title: "After Hours",
     artist: "The Weeknd",
     duration: "6:01",
-    cover: "https://images.unsplash.com/photo-1493225339996-2f7bedcc002c?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3",
+    cover: "https://i.scdn.co/image/ab67616d0000b2738863bc11d2aa12b54f5aeb36",
   },
 ];
 
@@ -63,6 +64,7 @@ export default function MusicPlayer() {
   const [searchQuery, setSearchQuery] = useState("");
   const [accentColor, setAccentColor] = useState("#9b87f5");
   const [isDarkTheme, setIsDarkTheme] = useState(false);
+  const [showUserProfile, setShowUserProfile] = useState(false);
   
   const { toast } = useToast();
   
@@ -215,7 +217,15 @@ export default function MusicPlayer() {
             
             <SearchBar onSearch={handleSearch} />
             
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-3">
+              <button
+                onClick={() => setShowUserProfile(true)}
+                className="p-2 rounded-full transition-colors hover:bg-secondary"
+                aria-label="User Profile"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-gray-600 dark:text-gray-400"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+              </button>
+              
               <div 
                 className="text-sm text-gray-600 dark:text-gray-400 hidden md:block"
                 onMouseEnter={() => setShowTooltip("keyboard")}
@@ -352,6 +362,16 @@ export default function MusicPlayer() {
           </div>
         </div>
       </div>
+      
+      {showUserProfile && (
+        <UserProfile 
+          onClose={() => setShowUserProfile(false)} 
+          accentColor={accentColor}
+          onColorChange={handleColorChange}
+          isDarkTheme={isDarkTheme}
+          onThemeChange={handleThemeChange}
+        />
+      )}
     </div>
   );
 }

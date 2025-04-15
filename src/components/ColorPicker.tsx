@@ -38,8 +38,8 @@ export default function ColorPicker({ onColorSelect, selectedColor }: ColorPicke
       </button>
       
       {isOpen && (
-        <div className="absolute right-0 mt-2 p-3 bg-white dark:bg-gray-800 rounded-lg shadow-xl z-50 animate-fade-in">
-          <div className="grid grid-cols-4 gap-2">
+        <div className="absolute right-0 mt-2 p-4 bg-white dark:bg-gray-800 rounded-lg shadow-xl z-50 animate-fade-in">
+          <div className="grid grid-cols-4 gap-3">
             {colors.map((color) => (
               <button
                 key={color}
@@ -48,7 +48,7 @@ export default function ColorPicker({ onColorSelect, selectedColor }: ColorPicke
                   setIsOpen(false);
                 }}
                 className={cn(
-                  "w-6 h-6 rounded-full transition-transform hover:scale-110",
+                  "w-7 h-7 rounded-full transition-transform hover:scale-110",
                   selectedColor === color ? "ring-2 ring-offset-2 ring-gray-400 dark:ring-gray-600" : ""
                 )}
                 style={{ backgroundColor: color }}
