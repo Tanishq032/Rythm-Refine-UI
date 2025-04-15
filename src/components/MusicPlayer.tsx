@@ -55,6 +55,55 @@ const tracks = [
     duration: "6:01",
     cover: "https://i.scdn.co/image/ab67616d0000b2738863bc11d2aa12b54f5aeb36",
   },
+  {
+    id: "6",
+    title: "Bad Guy",
+    artist: "Billie Eilish",
+    duration: "3:14",
+    cover: "https://i.scdn.co/image/ab67616d0000b273d55684e600efb76670a7920a",
+  },
+  {
+    id: "7",
+    title: "Everything I Wanted",
+    artist: "Billie Eilish",
+    duration: "4:05",
+    cover: "https://i.scdn.co/image/ab67616d0000b273cb719f5cc6fcc598bc8acdab",
+  },
+  {
+    id: "8",
+    title: "drivers license",
+    artist: "Olivia Rodrigo",
+    duration: "4:07",
+    cover: "https://i.scdn.co/image/ab67616d0000b273a91c10fe9472d9bd89802e5a",
+  },
+  {
+    id: "9",
+    title: "good 4 u",
+    artist: "Olivia Rodrigo",
+    duration: "2:58",
+    cover: "https://i.scdn.co/image/ab67616d0000b2736d4b58bdf055516f00aa0707",
+  },
+  {
+    id: "10",
+    title: "positions",
+    artist: "Ariana Grande",
+    duration: "2:52",
+    cover: "https://i.scdn.co/image/ab67616d0000b2735ef878a782c987d38d82b605",
+  },
+  {
+    id: "11",
+    title: "34+35",
+    artist: "Ariana Grande",
+    duration: "2:53",
+    cover: "https://i.scdn.co/image/ab67616d0000b2735ef878a782c987d38d82b605",
+  },
+  {
+    id: "12",
+    title: "Leave The Door Open",
+    artist: "Bruno Mars, Anderson .Paak, Silk Sonic",
+    duration: "4:02",
+    cover: "https://i.scdn.co/image/ab67616d0000b273ba3c3bed35f1526e0cdfbdae",
+  }
 ];
 
 export default function MusicPlayer() {

@@ -1,6 +1,6 @@
 
 import { useState } from "react";
-import { ListMusic, TrendingUp, Coffee, Zap, Brain } from "lucide-react";
+import { ListMusic, TrendingUp, Coffee, Zap, Brain, Headphones, Heart, Leaf } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface Playlist {
@@ -26,7 +26,7 @@ export default function SmartPlaylists({ onSelectPlaylist, currentTrackId, accen
       id: "relaxing",
       title: "Relaxing Vibes",
       description: "Chill tracks for winding down",
-      tracks: ["3", "4", "5"],
+      tracks: ["3", "4", "5", "8", "10"],
       type: "mood",
       icon: <Coffee size={18} />
     },
@@ -34,7 +34,7 @@ export default function SmartPlaylists({ onSelectPlaylist, currentTrackId, accen
       id: "energetic",
       title: "Energy Boost",
       description: "High-tempo tracks to get you moving",
-      tracks: ["1", "3", "2"],
+      tracks: ["1", "3", "2", "6", "9"],
       type: "mood",
       icon: <Zap size={18} />
     },
@@ -42,7 +42,7 @@ export default function SmartPlaylists({ onSelectPlaylist, currentTrackId, accen
       id: "focus",
       title: "Deep Focus",
       description: "Concentration-enhancing tracks",
-      tracks: ["5", "4", "1"],
+      tracks: ["5", "4", "1", "7", "11"],
       type: "mood",
       icon: <Brain size={18} />
     },
@@ -50,9 +50,33 @@ export default function SmartPlaylists({ onSelectPlaylist, currentTrackId, accen
       id: "trending",
       title: "Your Trending",
       description: "Based on your recent plays",
-      tracks: ["2", "1", "3", "4"],
+      tracks: ["2", "1", "3", "4", "7", "12"],
       type: "smart",
       icon: <TrendingUp size={18} />
+    },
+    {
+      id: "indie",
+      title: "Indie Discoveries",
+      description: "Fresh indie tracks you might like",
+      tracks: ["6", "7", "8", "9", "10"],
+      type: "genre",
+      icon: <Headphones size={18} />
+    },
+    {
+      id: "loved",
+      title: "Most Loved",
+      description: "Your most favorited tracks",
+      tracks: ["1", "5", "9", "11", "12"],
+      type: "smart",
+      icon: <Heart size={18} />
+    },
+    {
+      id: "chill",
+      title: "Ambient Chill",
+      description: "Perfect background sounds",
+      tracks: ["8", "10", "11", "4", "7"],
+      type: "mood",
+      icon: <Leaf size={18} />
     }
   ];
   

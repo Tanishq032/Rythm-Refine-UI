@@ -1,6 +1,7 @@
 
 import { useEffect, useState } from "react";
 import { Moon, Sun } from "lucide-react";
+import { Toggle } from "./ui/toggle";
 
 interface ThemeToggleProps {
   onThemeChange?: (isDark: boolean) => void;
@@ -11,11 +12,19 @@ export default function ThemeToggle({ onThemeChange }: ThemeToggleProps = {}) {
 
   // Initialize theme based on system preferences
   useEffect(() => {
-    if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+    // Check if dark mode is preferred or already set
+    const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+    const storedTheme = localStorage.getItem('theme');
+    const initialDark = storedTheme === 'dark' || (!storedTheme && prefersDark);
+    
+    if (initialDark) {
       setIsDark(true);
       document.documentElement.classList.add('dark');
-      onThemeChange?.(true);
+    } else {
+      document.documentElement.classList.remove('dark');
     }
+    
+    onThemeChange?.(initialDark);
   }, [onThemeChange]);
 
   // Toggle theme with animation
@@ -27,8 +36,10 @@ export default function ThemeToggle({ onThemeChange }: ThemeToggleProps = {}) {
     
     if (newIsDark) {
       document.documentElement.classList.add('dark');
+      localStorage.setItem('theme', 'dark');
     } else {
       document.documentElement.classList.remove('dark');
+      localStorage.setItem('theme', 'light');
     }
     
     onThemeChange?.(newIsDark);
@@ -40,8 +51,9 @@ export default function ThemeToggle({ onThemeChange }: ThemeToggleProps = {}) {
   };
 
   return (
-    <button
-      onClick={toggleTheme}
+    <Toggle
+      pressed={isDark}
+      onPressedChange={toggleTheme}
       className="p-2 rounded-full transition-all duration-300 hover:bg-secondary flex items-center justify-center"
       aria-label="Toggle theme"
     >
@@ -50,6 +62,6 @@ export default function ThemeToggle({ onThemeChange }: ThemeToggleProps = {}) {
       ) : (
         <Moon size={20} className="text-slate-700 animate-scale-in" />
       )}
-    </button>
+    </Toggle>
   );
 }
