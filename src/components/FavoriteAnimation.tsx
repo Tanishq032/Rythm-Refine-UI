@@ -16,11 +16,11 @@ export default function FavoriteAnimation({ isFavorite, onAnimationComplete }: F
       
       // Generate particles
       const newParticles = [];
-      for (let i = 0; i < 20; i++) {
+      for (let i = 0; i < 25; i++) {
         const size = Math.random() * 8 + 4;
         const angle = Math.random() * Math.PI * 2;
-        const distance = Math.random() * 60 + 40;
-        const duration = Math.random() * 1 + 0.5;
+        const distance = Math.random() * 70 + 40;
+        const duration = Math.random() * 1.2 + 0.8;
         const delay = Math.random() * 0.3;
         
         // Colors
@@ -39,7 +39,7 @@ export default function FavoriteAnimation({ isFavorite, onAnimationComplete }: F
               height: `${size}px`,
               backgroundColor: color,
               transform: `translate(${x}px, ${y}px) scale(0)`,
-              animation: `favoriteParticle ${duration}s ease-out ${delay}s forwards`,
+              animation: `favoriteParticle ${duration}s cubic-bezier(0.22, 1, 0.36, 1) ${delay}s forwards`,
               opacity: 0,
             }}
           />
@@ -66,7 +66,7 @@ export default function FavoriteAnimation({ isFavorite, onAnimationComplete }: F
         <div 
           className="w-12 h-12 text-red-500 animate-favorite-pulse"
           style={{
-            animation: "favoriteHeart 0.5s ease-out forwards"
+            animation: "favoriteHeart 0.5s cubic-bezier(0.22, 1, 0.36, 1) forwards"
           }}
         >
           <svg viewBox="0 0 24 24" fill="currentColor" stroke="none">

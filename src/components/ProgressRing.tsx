@@ -25,14 +25,14 @@ export default function ProgressRing({
       height={size} 
       width={size} 
       className={`absolute top-0 left-0 -rotate-90 transition-all duration-1000 ease-in-out ${
-        isPlaying ? 'opacity-100 animate-pulse-slow' : 'opacity-70'
+        isPlaying ? 'opacity-100' : 'opacity-70'
       }`}
     >
       {/* Enhanced glow effect */}
       {isPlaying && (
         <filter id="glow">
           <feGaussianBlur stdDeviation="3.5" result="coloredBlur" />
-          <feFlood floodColor={accentColor || "#9b87f5"} floodOpacity="0.5" result="glowColor" />
+          <feFlood floodColor={accentColor || "#9b87f5"} floodOpacity="0.7" result="glowColor" />
           <feComposite in="glowColor" in2="coloredBlur" operator="in" result="softGlow" />
           <feComposite in="SourceGraphic" in2="softGlow" operator="over" />
         </filter>
@@ -61,7 +61,7 @@ export default function ProgressRing({
         r={normalizedRadius}
         cx={size / 2}
         cy={size / 2}
-        className={!accentColor ? "text-primary transition-all duration-1000 ease-in-out" : "transition-all duration-1000 ease-in-out"}
+        className={`transition-all duration-700 ease-in-out ${!accentColor ? "text-primary" : ""}`}
         filter={isPlaying ? "url(#glow)" : ""}
       />
     </svg>

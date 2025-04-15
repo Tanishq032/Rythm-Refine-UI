@@ -176,6 +176,15 @@
   }
 }
 
+@keyframes spin-slow {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
 @layer utilities {
   .animate-favorite-pulse {
     animation: favorite-pulse 1.5s infinite;
@@ -187,5 +196,9 @@
   
   .animate-pulse-beat {
     animation: pulse-beat 0.65s infinite;
+  }
+  
+  .animate-spin-slow {
+    animation: spin-slow 20s linear infinite;
   }
 }

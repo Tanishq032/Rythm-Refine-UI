@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { Heart, Info, ListMusic, Share, Mic, Users } from "lucide-react";
 import ProgressRing from "./ProgressRing";
@@ -124,6 +123,7 @@ export default function MusicPlayer() {
   const [showShareOptions, setShowShareOptions] = useState(false);
   const [showCollaborativePlaylists, setShowCollaborativePlaylists] = useState(false);
   const [displayedTracks, setDisplayedTracks] = useState(tracks);
+  const [favoriteTracks, setFavoriteTracks] = useState<typeof tracks>([]);
   
   const { toast } = useToast();
   
@@ -155,6 +155,11 @@ export default function MusicPlayer() {
       window.removeEventListener("keydown", handleKeyPress);
     };
   }, []);
+
+  useEffect(() => {
+    const isFav = favoriteTracks.some(track => track.id === currentTrackId);
+    setIsFavorite(isFav);
+  }, [currentTrackId, favoriteTracks]);
 
   useEffect(() => {
     document.documentElement.style.setProperty('--accent-color', accentColor);
@@ -236,12 +241,19 @@ export default function MusicPlayer() {
     setIsFavorite(newFavoriteState);
     
     if (newFavoriteState) {
+      const trackToAdd = tracks.find(track => track.id === currentTrackId);
+      if (trackToAdd && !favoriteTracks.some(t => t.id === currentTrackId)) {
+        setFavoriteTracks(prev => [...prev, trackToAdd]);
+      }
+      
       setShowFavoriteAnimation(true);
       toast({
         title: "Added to favorites",
         description: `${currentTrack.title} by ${currentTrack.artist} has been added to your favorites.`,
       });
     } else {
+      setFavoriteTracks(prev => prev.filter(track => track.id !== currentTrackId));
+      
       toast({
         title: "Removed from favorites",
         description: `${currentTrack.title} by ${currentTrack.artist} has been removed from your favorites.`,
@@ -346,6 +358,9 @@ export default function MusicPlayer() {
                         className={`w-full h-full object-cover transition-transform duration-1000 ease-in-out ${
                           isPlaying ? "animate-spin-slow" : ""
                         } group-hover:scale-105 transition-all duration-700`}
+                        onError={(e) => {
+                          e.currentTarget.src = "https://i.scdn.co/image/ab67616d0000b2736d4b58bdf055516f00aa0707";
+                        }}
                       />
                       
                       <div 
@@ -487,6 +502,7 @@ export default function MusicPlayer() {
           onColorChange={handleColorChange}
           isDarkTheme={isDarkTheme}
           onThemeChange={handleThemeChange}
+          favoriteTracks={favoriteTracks}
         />
       )}
       

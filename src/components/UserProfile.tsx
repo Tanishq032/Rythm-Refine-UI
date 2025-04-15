@@ -8,6 +8,13 @@ interface UserProfileProps {
   onColorChange: (color: string) => void;
   isDarkTheme: boolean;
   onThemeChange: (isDark: boolean) => void;
+  favoriteTracks?: {
+    id: string;
+    title: string;
+    artist: string;
+    duration: string;
+    cover: string;
+  }[];
 }
 
 export default function UserProfile({
@@ -16,6 +23,7 @@ export default function UserProfile({
   onColorChange,
   isDarkTheme,
   onThemeChange,
+  favoriteTracks = [],
 }: UserProfileProps) {
   const [activeTab, setActiveTab] = useState("profile");
   const [username, setUsername] = useState("Music Lover");
@@ -178,14 +186,47 @@ export default function UserProfile({
             
             {activeTab === 'favorites' && (
               <div className="space-y-2">
-                <p className="text-gray-600 dark:text-gray-400 mb-4">Your favorite tracks will appear here.</p>
-                <div className="bg-white/5 dark:bg-black/20 p-6 rounded-lg text-center">
-                  <Heart size={32} className="mx-auto mb-3 text-gray-400" />
-                  <p>No favorites yet</p>
-                  <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
-                    Start adding songs to your favorites
-                  </p>
-                </div>
+                <h3 className="text-lg font-semibold mb-3 flex items-center gap-2">
+                  <Heart size={18} className="text-red-500" />
+                  Your Favorites
+                </h3>
+                
+                {favoriteTracks.length > 0 ? (
+                  <div className="space-y-3 max-h-[400px] overflow-y-auto pr-2">
+                    {favoriteTracks.map((track) => (
+                      <div 
+                        key={track.id} 
+                        className="flex items-center p-2 rounded-lg hover:bg-white/10 transition-colors"
+                      >
+                        <div className="w-12 h-12 rounded-md overflow-hidden mr-3 flex-shrink-0">
+                          <img 
+                            src={track.cover} 
+                            alt={track.title}
+                            className="w-full h-full object-cover"
+                            onError={(e) => {
+                              e.currentTarget.src = "https://i.scdn.co/image/ab67616d0000b2736d4b58bdf055516f00aa0707"; // fallback image
+                            }}
+                          />
+                        </div>
+                        <div className="flex-grow min-w-0">
+                          <p className="font-medium text-sm truncate">{track.title}</p>
+                          <p className="text-xs text-gray-500 dark:text-gray-400 truncate">{track.artist}</p>
+                        </div>
+                        <div className="text-xs text-gray-500 dark:text-gray-400 ml-2">
+                          {track.duration}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="bg-white/5 dark:bg-black/20 p-6 rounded-lg text-center">
+                    <Heart size={32} className="mx-auto mb-3 text-gray-400" />
+                    <p>No favorites yet</p>
+                    <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+                      Start adding songs to your favorites
+                    </p>
+                  </div>
+                )}
               </div>
             )}
             

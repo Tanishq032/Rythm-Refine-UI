@@ -7,27 +7,30 @@ interface ThemeToggleProps {
   onThemeChange?: (isDark: boolean) => void;
 }
 
-export default function ThemeToggle({ onThemeChange }: ThemeToggleProps = {}) {
+export default function ThemeToggle({ onThemeChange }: ThemeToggleProps) {
   const [isDark, setIsDark] = useState(false);
 
-  // Initialize theme based on system preferences
+  // Initialize theme based on system preferences or previously stored theme
   useEffect(() => {
     // Check if dark mode is preferred or already set
     const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
     const storedTheme = localStorage.getItem('theme');
     const initialDark = storedTheme === 'dark' || (!storedTheme && prefersDark);
     
+    setIsDark(initialDark);
+    
     if (initialDark) {
-      setIsDark(true);
       document.documentElement.classList.add('dark');
     } else {
       document.documentElement.classList.remove('dark');
     }
     
-    onThemeChange?.(initialDark);
+    if (onThemeChange) {
+      onThemeChange(initialDark);
+    }
   }, [onThemeChange]);
 
-  // Toggle theme with animation
+  // Toggle theme
   const toggleTheme = () => {
     const newIsDark = !isDark;
     setIsDark(newIsDark);
@@ -42,12 +45,14 @@ export default function ThemeToggle({ onThemeChange }: ThemeToggleProps = {}) {
       localStorage.setItem('theme', 'light');
     }
     
-    onThemeChange?.(newIsDark);
-    
     // Remove transition class after animation completes
     setTimeout(() => {
       document.documentElement.classList.remove('theme-transition');
     }, 800);
+    
+    if (onThemeChange) {
+      onThemeChange(newIsDark);
+    }
   };
 
   return (
@@ -58,9 +63,9 @@ export default function ThemeToggle({ onThemeChange }: ThemeToggleProps = {}) {
       aria-label="Toggle theme"
     >
       {isDark ? (
-        <Sun size={20} className="text-yellow-300 animate-scale-in" />
+        <Moon size={20} className="text-yellow-300 animate-scale-in" />
       ) : (
-        <Moon size={20} className="text-slate-700 animate-scale-in" />
+        <Sun size={20} className="text-slate-700 animate-scale-in" />
       )}
     </Toggle>
   );
