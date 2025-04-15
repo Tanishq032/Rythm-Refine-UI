@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { X, Music, Heart, Clock, Settings, Edit, Camera } from "lucide-react";
 
@@ -270,7 +269,7 @@ export default function UserProfile({
                 
                 <div>
                   <h4 className="font-medium mb-2">Accent Color</h4>
-                  <div className="grid grid-cols-4 sm:grid-cols-8 gap-3">
+                  <div className="grid grid-cols-4 sm:grid-cols-8 gap-3 p-2 bg-white/5 dark:bg-black/10 rounded-lg">
                     {[
                       { name: "Purple", color: "#9b87f5" },
                       { name: "Orange", color: "#f97316" },
@@ -292,7 +291,7 @@ export default function UserProfile({
                           className="w-8 h-8 rounded-full"
                           style={{ backgroundColor: color }}
                         />
-                        <span className="text-xs">{name}</span>
+                        <span className="text-xs truncate max-w-full">{name}</span>
                       </button>
                     ))}
                   </div>
